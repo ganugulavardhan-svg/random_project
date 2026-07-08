@@ -12,7 +12,7 @@ import level1Img from '../assets/level1.jpg';
 import level2Img from '../assets/level2.jpg';
 import level3Img from '../assets/level3.jpg';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
 const loginSchema = z.object({
   email: z

@@ -12,7 +12,7 @@ import level3Img from '../assets/level3.jpg';
 import { FcGoogle as Chrome } from 'react-icons/fc';
 import { FaGithub as Github } from 'react-icons/fa';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_BACKEND_URL;
 
 // Define Zod Schema for Registration
 const signupSchema = z.object({
