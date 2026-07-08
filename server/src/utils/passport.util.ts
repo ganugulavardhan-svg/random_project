@@ -9,7 +9,6 @@ import {
   GOOGLE_CLIENT_SECRET,
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET,
-  PORT,
   SERVER_URL
 } from '@utils/config.util.js';
 
