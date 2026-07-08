@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Provider, useSelector, useDispatch } from 'react-redux';
 import store from './store';
-import { clearStatus } from './store/authSlice';
+import { clearStatus, fetchCurrentUser, setOAuthError } from './store/authSlice';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
@@ -11,11 +11,20 @@ import Notification from './components/Notification';
 const AuthApp = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  
-  // Page routing state: 'home' | 'login' | 'signup' | 'dashboard'
+
   const [currentPage, setCurrentPage] = useState('home');
 
-  // Trigger auto-redirect to home on successful authentication
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('oauth') === 'success') {
+      dispatch(fetchCurrentUser());
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (params.get('oauth') === 'error') {
+      dispatch(setOAuthError(params.get('message') || 'OAuth authentication failed.'));
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [dispatch]);
+
   useEffect(() => {
     if (user) {
       if (currentPage === 'login' || currentPage === 'signup') {
@@ -29,16 +38,14 @@ const AuthApp = () => {
   }, [user, currentPage]);
 
   const handleNavigate = (page) => {
-    dispatch(clearStatus()); // Clear auth errors/status messages upon switching page routing
+    dispatch(clearStatus());
     setCurrentPage(page);
   };
 
   return (
     <div className="relative min-h-screen w-full bg-zinc-950 text-white">
-      {/* Toast notifications */}
       <Notification />
 
-      {/* Render dedicated full screen page views */}
       {currentPage === 'home' && (
         <Homepage onNavigate={handleNavigate} />
       )}

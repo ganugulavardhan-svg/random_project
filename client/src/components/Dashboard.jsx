@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../store/authSlice';
-import { LogOut, User, Mail, ShieldAlert, ArrowLeft } from 'lucide-react';
+import { logoutUser } from '../store/authSlice';
+import { LogOut, User, Mail, ShieldAlert, ArrowLeft, Award } from 'lucide-react';
 
 const Dashboard = ({ onNavigate }) => {
   const dispatch = useDispatch();
@@ -13,15 +13,18 @@ const Dashboard = ({ onNavigate }) => {
     return name ? name.charAt(0).toUpperCase() : 'U';
   };
 
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    onNavigate('home');
+  };
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-ambient-radial-green px-6 py-12 relative overflow-hidden font-mono select-none">
-      {/* HUD scanline and ambient glows */}
       <div className="absolute inset-0 crt-scanline pointer-events-none z-30 opacity-30"></div>
       <div className="absolute w-[400px] h-[400px] bg-cyber-green/5 rounded-full blur-[120px] top-[10%] left-[15%] pointer-events-none"></div>
       <div className="absolute w-[350px] h-[350px] bg-cyber-yellow/4 rounded-full blur-[100px] bottom-[10%] right-[15%] pointer-events-none"></div>
 
       <div className="w-full max-w-[500px] bg-zinc-950/80 border border-cyber-green/20 rounded-3xl p-8 sm:p-10 shadow-[0_0_50px_rgba(0,255,102,0.05)] transition-all duration-300 hover:border-cyber-green/40 hover:shadow-[0_0_50px_rgba(0,255,102,0.1)] z-10 relative">
-        {/* Navigation back */}
         <button
           onClick={() => onNavigate('home')}
           className="absolute top-6 left-6 flex items-center gap-1.5 text-xs text-zinc-500 hover:text-cyber-green transition-colors cursor-pointer"
@@ -34,7 +37,7 @@ const Dashboard = ({ onNavigate }) => {
             {getInitials(user.username)}
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 tracking-widest font-cyber uppercase">
-            {user.username}
+            {user.displayName || user.username}
           </h2>
           <p className="text-xs text-zinc-500">OPERATIONAL ACCESS CONTROL PANEL</p>
         </div>
@@ -52,12 +55,18 @@ const Dashboard = ({ onNavigate }) => {
             </span>
             <span className="text-sm font-semibold text-white">{user.email}</span>
           </div>
+          <div className="flex justify-between items-center py-2 border-b border-zinc-800/40">
+            <span className="text-xs text-zinc-400 flex items-center gap-2">
+              <Award size={14} className="text-cyber-green" /> CREDITS
+            </span>
+            <span className="text-sm font-semibold text-cyber-primary">{user.credits ?? 0}</span>
+          </div>
           <div className="flex justify-between items-center py-2">
             <span className="text-xs text-zinc-400 flex items-center gap-2">
               <ShieldAlert size={14} className="text-cyber-green" /> COMPILER_STATE
             </span>
-            <span className="text-xs font-semibold text-cyber-green border border-cyber-green/30 px-2 py-0.5 rounded bg-cyber-green/5 animate-pulse uppercase tracking-wider">
-              ONLINE // MOCK_SECURE
+            <span className={`text-xs font-semibold border px-2 py-0.5 rounded uppercase tracking-wider ${user.isVerified ? 'text-cyber-green border-cyber-green/30 bg-cyber-green/5' : 'text-yellow-400 border-yellow-400/30 bg-yellow-400/5'}`}>
+              {user.isVerified ? 'VERIFIED' : 'UNVERIFIED'}
             </span>
           </div>
         </div>
@@ -65,10 +74,7 @@ const Dashboard = ({ onNavigate }) => {
         <button
           type="button"
           className="w-full py-3 px-4 bg-transparent border border-red-950 hover:border-red-500 hover:bg-red-500/10 text-red-400 font-bold rounded-xl text-xs transition-all duration-200 flex justify-center items-center gap-2 cursor-pointer uppercase tracking-widest"
-          onClick={() => {
-            dispatch(logout());
-            onNavigate('home');
-          }}
+          onClick={handleLogout}
         >
           <LogOut size={16} />
           DISCONNECT CELL

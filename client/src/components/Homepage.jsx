@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../store/authSlice';
+import { logoutUser } from '../store/authSlice';
 import { 
   Play, Lock, Terminal, Cpu, Shield, Sparkles, 
   ChevronRight, Activity, Wifi, X, Film, Image as ImageIcon,
@@ -405,7 +405,7 @@ const Homepage = ({ onNavigate }) => {
                 CELL ACTIVE // <span className="font-bold">{user.username.toUpperCase()}</span>
               </button>
               <button 
-                onClick={() => dispatch(logout())}
+                onClick={() => dispatch(logoutUser())}
                 className="px-4 py-1.5 border border-red-950 hover:border-red-500 hover:bg-red-500/10 text-xs text-red-400 rounded-lg transition-all duration-200 cursor-pointer"
               >
                 DISCONNECT

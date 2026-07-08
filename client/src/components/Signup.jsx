@@ -4,13 +4,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from '../store/authSlice';
-import { User, Mail, Lock, Eye, EyeOff, AlertCircle, ArrowLeft, Disc } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import heroImg from '../assets/command_center.jpg';
 import level1Img from '../assets/level1.jpg';
 import level2Img from '../assets/level2.jpg';
 import level3Img from '../assets/level3.jpg';
 import { FcGoogle as Chrome } from 'react-icons/fc';
 import { FaGithub as Github } from 'react-icons/fa';
+
+const API_BASE = 'http://localhost:8000';
 
 // Define Zod Schema for Registration
 const signupSchema = z.object({
@@ -274,23 +276,17 @@ const Signup = ({ onNavigate }) => {
             </div>
 
             <div className="space-y-2">
-              <button 
+              <button
+                onClick={() => window.location.href = `${API_BASE}/api/auth/google`}
                 className="w-full py-3 bg-white/5 border border-white/5 hover:border-cyber-primary/20 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/8 cursor-pointer"
-                disabled={isLoading}
               >
                 <Chrome size={14} className="text-zinc-400" /> Continue with Google
               </button>
-              <button 
+              <button
+                onClick={() => window.location.href = `${API_BASE}/api/auth/github`}
                 className="w-full py-3 bg-white/5 border border-white/5 hover:border-cyber-primary/20 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/8 cursor-pointer"
-                disabled={isLoading}
               >
                 <Github size={14} className="text-zinc-400" /> Continue with GitHub
-              </button>
-              <button 
-                className="w-full py-3 bg-white/5 border border-white/5 hover:border-cyber-primary/20 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/8 cursor-pointer"
-                disabled={isLoading}
-              >
-                <Disc size={14} className="text-zinc-400" /> Continue with Discord
               </button>
             </div>
           </div>

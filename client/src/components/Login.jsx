@@ -4,13 +4,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../store/authSlice';
-import { Mail, Lock, Eye, EyeOff, AlertCircle, ArrowLeft, Disc } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import { FcGoogle as Chrome } from 'react-icons/fc';
 import { FaGithub as Github } from "react-icons/fa";
 import heroImg from '../assets/command_center.jpg';
 import level1Img from '../assets/level1.jpg';
 import level2Img from '../assets/level2.jpg';
 import level3Img from '../assets/level3.jpg';
+
+const API_BASE = 'http://localhost:8000';
 
 const loginSchema = z.object({
   email: z
@@ -220,22 +222,18 @@ const FormSection = React.memo(({ onNavigate, isLoading, errors, register, handl
         </div>
 
         <div className="space-y-2">
-          {[
-            { icon: Chrome, text: 'Continue with Google' },
-            { icon: Github, text: 'Continue with GitHub' },
-            { icon: Disc, text: 'Continue with Discord' },
-          ].map((btn, idx) => {
-            const Icon = btn.icon;
-            return (
-              <button
-                key={idx}
-                className="w-full py-3 bg-white/5 border border-white/5 hover:border-cyber-primary/20 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/8 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
-                disabled={isLoading}
-              >
-                <Icon size={14} className="text-zinc-400" /> {btn.text}
-              </button>
-            );
-          })}
+          <button
+            onClick={() => window.location.href = `${API_BASE}/api/auth/google`}
+            className="w-full py-3 bg-white/5 border border-white/5 hover:border-cyber-primary/20 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/8 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Chrome size={14} className="text-zinc-400" /> Continue with Google
+          </button>
+          <button
+            onClick={() => window.location.href = `${API_BASE}/api/auth/github`}
+            className="w-full py-3 bg-white/5 border border-white/5 hover:border-cyber-primary/20 text-zinc-300 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-white/8 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+          >
+            <Github size={14} className="text-zinc-400" /> Continue with GitHub
+          </button>
         </div>
       </div>
 

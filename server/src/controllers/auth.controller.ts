@@ -1,8 +1,105 @@
-import {type Request, type Response} from "express";
-import {authService} from "@services/auth.service.js";
+import { type Request, type Response } from "express";
+import { authService } from "@services/auth.service.js";
+import { CLIENT_URL } from "@utils/config.util.js";
 
 export async function register(req: Request, res: Response) {
-    const result = await authService.register(req.body);
-
+  try {
+    const { email, password, username } = req.body;
+    const result = await authService.registerWithPassword(email, password, username);
     res.status(201).json(result);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+}
+
+export async function login(req: Request, res: Response) {
+  try {
+    const { email, password } = req.body;
+    const result = await authService.loginWithPassword(email, password);
+    res.cookie("session_token", result.sessionId, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.json({ user: result.user });
+  } catch (err: any) {
+    res.status(401).json({ error: err.message });
+  }
+}
+
+export async function logout(req: Request, res: Response) {
+  try {
+    const sessionId = req.cookies?.session_token;
+    if (sessionId) {
+      await authService.destroySession(sessionId);
+    }
+    res.clearCookie("session_token");
+    res.json({ message: "Logged out successfully." });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+export async function getMe(req: Request, res: Response) {
+  try {
+    const sessionId = req.cookies?.session_token;
+    if (!sessionId) {
+      return res.status(401).json({ error: "Not authenticated." });
+    }
+    const { Redis } = await import("ioredis");
+    const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+    const sessionData = await redis.get(`session:${sessionId}`);
+    if (!sessionData) {
+      return res.status(401).json({ error: "Session expired." });
+    }
+    const { userId } = JSON.parse(sessionData);
+    const user = await authService.getCurrentUser(userId);
+    res.json({ user });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+export async function verifyEmail(req: Request, res: Response) {
+  try {
+    const { token } = req.query;
+    if (!token || typeof token !== "string") {
+      return res.status(400).json({ error: "Verification token is required." });
+    }
+    const result = await authService.verifyEmailToken(token);
+    res.json(result);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+}
+
+export async function googleCallback(req: Request, res: Response) {
+  try {
+    const { sessionId, user } = req.user as any;
+    res.cookie("session_token", sessionId, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.redirect(`${CLIENT_URL}?oauth=success`);
+  } catch (err: any) {
+    res.redirect(`${CLIENT_URL}?oauth=error&message=${encodeURIComponent(err.message)}`);
+  }
+}
+
+export async function githubCallback(req: Request, res: Response) {
+  try {
+    const { sessionId, user } = req.user as any;
+    res.cookie("session_token", sessionId, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.redirect(`${CLIENT_URL}?oauth=success`);
+  } catch (err: any) {
+    res.redirect(`${CLIENT_URL}?oauth=error&message=${encodeURIComponent(err.message)}`);
+  }
 }

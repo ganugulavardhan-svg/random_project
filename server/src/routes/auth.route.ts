@@ -1,8 +1,19 @@
-import {Router} from 'express';
-import { register } from '@/controllers/auth.controller.js';
+import { Router } from 'express';
+import passport from '@utils/passport.util.js';
+import { register, login, logout, getMe, verifyEmail, googleCallback, githubCallback } from '@/controllers/auth.controller.js';
 
 const router = Router();
 
 router.post('/register', register);
+router.post('/login', login);
+router.post('/logout', logout);
+router.get('/me', getMe);
+router.get('/verify-email', verifyEmail);
+
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
+router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/?oauth=error' }), googleCallback);
+
+router.get('/github', passport.authenticate('github', { scope: ['user:email'], session: false }));
+router.get('/github/callback', passport.authenticate('github', { session: false, failureRedirect: '/?oauth=error' }), githubCallback);
 
 export default router;
