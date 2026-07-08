@@ -3,8 +3,9 @@ import { Redis } from 'ioredis';
 import { db } from '@db/index.js';
 import { users } from '@db/schema.js';
 import { eq } from 'drizzle-orm';
+import { REDIS_URL } from '@/utils/config.util.js';
 
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const redis = new Redis(REDIS_URL);
 interface AuthenticatedRequest extends Request {
   user?: any;
 }

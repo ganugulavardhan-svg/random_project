@@ -4,8 +4,9 @@ import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
+import { REDIS_URL } from '@/utils/config.util.js';
 
-const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+const redis = new Redis(REDIS_URL);
 const SALT_ROUNDS = 10;
 
 function generateDefaultUsername(): string {
@@ -16,7 +17,6 @@ export class AuthService {
 
   async registerWithPassword(email: string, password: string, username?: string) {
     let existingUser;
-    console.log(process.env.DATABASE_URL);
     try {
       existingUser = await db.select().from(users).where(eq(users.email, email)).limit(1);
     }catch(err: any) {

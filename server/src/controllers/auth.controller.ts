@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import { authService } from "@services/auth.service.js";
-import { CLIENT_URL } from "@utils/config.util.js";
+import { CLIENT_URL, REDIS_URL } from "@utils/config.util.js";
 
 export async function register(req: Request, res: Response) {
   try {
@@ -48,7 +48,7 @@ export async function getMe(req: Request, res: Response) {
       return res.status(401).json({ error: "Not authenticated." });
     }
     const { Redis } = await import("ioredis");
-    const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+    const redis = new Redis(REDIS_URL);
     const sessionData = await redis.get(`session:${sessionId}`);
     if (!sessionData) {
       return res.status(401).json({ error: "Session expired." });

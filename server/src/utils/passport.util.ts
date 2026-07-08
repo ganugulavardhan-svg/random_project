@@ -10,9 +10,9 @@ import {
   GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET,
   PORT,
+  SERVER_URL
 } from '@utils/config.util.js';
 
-const SERVER_URL = `http://localhost:${PORT}`;
 
 passport.use(
   new GoogleStrategy(
