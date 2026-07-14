@@ -2,4 +2,5 @@
 */dist
 */directions
 */drizzle 
-*/.env
+*/.env 
+server/env.copy

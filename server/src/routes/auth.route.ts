@@ -7,7 +7,7 @@ const router = Router();
 router.post('/register', register);
 router.post('/login', login);
 router.post('/logout', logout);
-router.get('/me', getMe);
+router.get('/user', getMe);
 router.get('/verify-email', verifyEmail);
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
