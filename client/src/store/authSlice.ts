@@ -25,7 +25,6 @@ const apiSlice = createApi({
         const curToast = toast.loading('Fetching user data...');
         try {
           await queryFulfilled;
-          toast.success('User data fetched successfully!', { id: curToast });
         } catch (err) {
           const {error} = err as {error: FetchBaseQueryError | SerializedError};
 
@@ -55,8 +54,8 @@ const apiSlice = createApi({
       onQueryStarted: async (_, { queryFulfilled }) => {
         const curToast = toast.loading('Logging in...');
         try {
-          await queryFulfilled;
-          toast.success('Logged in successfully!', { id: curToast });
+          const {data} = await queryFulfilled;
+          toast.success(data?.message, { id: curToast });
         } catch (err) {
           const {error} = err as { error: FetchBaseQueryError | SerializedError};
           console.error('Error logging in:', error);
@@ -82,9 +81,8 @@ const apiSlice = createApi({
       onQueryStarted: async (_, { queryFulfilled }) => {
         const curToast = toast.loading('Registering...');
         try {
-          const result = await queryFulfilled;
-          console.log('Registration successful:', result);
-          toast.success('Registered successfully!', { id: curToast });
+          const {data} = await queryFulfilled;
+          toast.success(data?.message || 'Registration Successfull', { id: curToast });
         } catch (err) {
           const { error } = err as {
             error: FetchBaseQueryError | SerializedError;
