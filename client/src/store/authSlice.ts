@@ -82,7 +82,8 @@ const apiSlice = createApi({
       onQueryStarted: async (_, { queryFulfilled }) => {
         const curToast = toast.loading('Registering...');
         try {
-          await queryFulfilled;
+          const result = await queryFulfilled;
+          console.log('Registration successful:', result);
           toast.success('Registered successfully!', { id: curToast });
         } catch (err) {
           const { error } = err as {
