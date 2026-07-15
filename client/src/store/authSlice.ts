@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery, type FetchBaseQueryError } from '@reduxjs/to
 import toast from 'react-hot-toast';
 
 
-const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000/api';
+const API_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000') + '/api';
 
 const apiSlice = createApi({
 
@@ -27,7 +27,7 @@ const apiSlice = createApi({
           await queryFulfilled;
           toast.success('User data fetched successfully!', { id: curToast });
         } catch (err) {
-          const error = err as {error: FetchBaseQueryError | SerializedError};
+          const {error} = err as {error: FetchBaseQueryError | SerializedError};
 
           if ('status' in error) {
             if (error.status === 401 || error.status === 403) {
@@ -58,7 +58,7 @@ const apiSlice = createApi({
           await queryFulfilled;
           toast.success('Logged in successfully!', { id: curToast });
         } catch (err) {
-          const error = err as {error: FetchBaseQueryError | SerializedError};
+          const {error} = err as { error: FetchBaseQueryError | SerializedError};
           console.error('Error logging in:', error);
           if ('status' in error) {
             if (error.status === 401 || error.status === 403) {
