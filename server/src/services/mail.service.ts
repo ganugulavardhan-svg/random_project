@@ -185,7 +185,7 @@ export class MailService {
             </div>
             
             <div class="button-container">
-                <a href="${SERVER_URL}/api/auth/token?code=${encodeURIComponent(verificationCode)}" class="verify-button">
+                <a href="${SERVER_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationCode)}" class="verify-button">
                     Verify Email
                 </a>
             </div>
@@ -198,8 +198,8 @@ export class MailService {
         <div class="footer">
             <p>
                 If the button above doesn't work, copy and paste this link in your browser:<br>
-                <a href="${SERVER_URL}/api/auth/token?code=${encodeURIComponent(verificationCode)}">
-                    ${SERVER_URL}/api/auth/token?code=${encodeURIComponent(verificationCode)}
+                <a href="${SERVER_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationCode)}">
+                    ${SERVER_URL}/api/auth/verify-email?token=${encodeURIComponent(verificationCode)}
                 </a>
             </p>
             <p style="margin-top: 15px;">

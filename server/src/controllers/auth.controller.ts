@@ -71,7 +71,7 @@ export async function verifyEmail(req: Request, res: Response) {
       return res.status(400).json({ error: "Verification token is required." });
     }
     const result = await authService.verifyEmailToken(token);
-    res.json(result);
+    res.redirect(CLIENT_URL + '/successfull-verification')
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
