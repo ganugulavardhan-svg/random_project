@@ -12,3 +12,12 @@ export const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || '';
 export const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || '';
 export const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 export const SERVER_URL = process.env.SERVER_URL || 'http://localhost:8000';
+
+export const SMTP_HOST = process.env.SMTP_HOST;
+export const SMTP_PORT = Number(process.env.SMTP_PORT);
+export const SMTP_USER = process.env.SMTP_USER; 
+export const SMTP_PASS = process.env.SMTP_PASS; 
+
+if(!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
+    throw new Error('SMTP configuration is missing. Please check your environment variables.');
+}

@@ -5,7 +5,10 @@ import bcrypt from 'bcrypt';
 import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { REDIS_URL } from '@/utils/config.util.js';
+import {MailService} from './mail.service.js';
 
+
+const mailService = new MailService();
 const redis = new Redis(REDIS_URL);
 const SALT_ROUNDS = 10;
 
@@ -42,6 +45,7 @@ export class AuthService {
 
     const verificationToken = uuidv4();
     await redis.set(`verify:${verificationToken}`, newUser.id, 'EX', 86400);
+    await mailService.sendVerificationMail(email, newUser.username, verificationToken);
 
     return { message: "Registration successful. Please check your email to verify your account." };
   }

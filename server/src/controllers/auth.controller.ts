@@ -1,6 +1,9 @@
 import { type Request, type Response } from "express";
 import { authService } from "@services/auth.service.js";
 import { CLIENT_URL, REDIS_URL } from "@utils/config.util.js";
+import { MailService } from "@/services/mail.service.js";
+
+const mailService = new MailService();
 
 export async function register(req: Request, res: Response) {
   try {
@@ -101,5 +104,19 @@ export async function githubCallback(req: Request, res: Response) {
     res.redirect(`${CLIENT_URL}?oauth=success`);
   } catch (err: any) {
     res.redirect(`${CLIENT_URL}?oauth=error&message=${encodeURIComponent(err.message)}`);
+  }
+}
+
+
+export async function sendVerificationEmail(req: Request, res: Response) {
+  try {
+    const { email, name, verificationCode } = req.body;
+    if (!email || !name || !verificationCode) {
+      return res.status(400).json({ error: "Email, name, and verification code are required." });
+    }
+    await mailService.sendVerificationMail(email, name, verificationCode);
+    res.status(200).json({ message: "Verification email sent successfully." });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
   }
 }

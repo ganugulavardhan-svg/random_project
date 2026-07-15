@@ -1,14 +1,19 @@
 import { Router } from 'express';
 import passport from '@utils/passport.util.js';
-import { register, login, logout, getMe, verifyEmail, googleCallback, githubCallback } from '@/controllers/auth.controller.js';
+import { register, login, logout, getMe, verifyEmail, googleCallback, githubCallback, sendVerificationEmail } from '@/controllers/auth.controller.js';
 
 const router = Router();
+
+
 
 router.post('/register', register);
 router.post('/login', login);
 router.post('/logout', logout);
 router.get('/user', getMe);
 router.get('/verify-email', verifyEmail);
+
+router.post('/send-verification-email', sendVerificationEmail);
+
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
 router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: '/?oauth=error' }), googleCallback);
