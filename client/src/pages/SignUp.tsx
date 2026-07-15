@@ -28,7 +28,7 @@ export default function Signup() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (data) navigate("/dashboard", { replace: true });
+        if (data) navigate("/login", { replace: true });
     }, [data, navigate]);
 
     const onSubmit = async (values: RegisterSchema) => {
