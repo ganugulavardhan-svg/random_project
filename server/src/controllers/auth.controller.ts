@@ -9,7 +9,10 @@ export async function register(req: Request, res: Response) {
   try {
     const { email, password, username } = req.body;
     const result = await authService.registerWithPassword(email, password, username);
-    res.status(201).json(result);
+    res.status(201).json({  
+      data: result,
+      message: 'Login Success'
+    });
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
@@ -71,7 +74,7 @@ export async function verifyEmail(req: Request, res: Response) {
       return res.status(400).json({ error: "Verification token is required." });
     }
     const result = await authService.verifyEmailToken(token);
-    res.redirect(CLIENT_URL + '/successfull-verification')
+    res.redirect(CLIENT_URL + '/dashboard')
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
