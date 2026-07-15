@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText } from "lucide-react";
-import { toast } from 'react-hot-toast';
 import { useRegisterMutation } from "@/store/authSlice";
 import { useForm } from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod"; 
@@ -25,8 +24,7 @@ export default function Signup() {
         }
     });
 
-    const [signUp, { isLoading, error, data }] = useRegisterMutation();
-    const signInWithGoogle = () => { }
+    const [signUp, { isLoading, data }] = useRegisterMutation();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -82,8 +80,17 @@ export default function Signup() {
                             <Label htmlFor="password">Password</Label>
                             <Input id="password" type="password" placeholder="Min. 6 characters" {...register("password")} required />
                         </div>
-                        
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        {/* show errors */}
+
+                        {errors.username || errors.email || errors.password ? (
+                            <div className="text-sm text-red-500">
+                                {errors.username && <p>{errors.username.message}</p>}
+                                {errors.email && <p>{errors.email.message}</p>}
+                                {errors.password && <p>{errors.password.message}</p>}
+                            </div>
+                        ) : null}
+
+                        <Button type="submit" className="w-full" disabled={(errors.username || errors.email || errors.password) ? true : isLoading}>
                             {isLoading ? "Creating account..." : "Create account"}
                         </Button>
 

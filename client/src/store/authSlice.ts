@@ -1,4 +1,5 @@
-import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'; 
+import type { SerializedError } from '@reduxjs/toolkit';
+import { createApi, fetchBaseQuery, type FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 import toast from 'react-hot-toast';
 
 
@@ -10,30 +11,38 @@ const apiSlice = createApi({
     baseUrl: API_URL,
     credentials: 'include',
   }),
-  
+
   reducerPath: 'api',
 
   endpoints: (builder) => ({
-    
-     getUser: builder.query({
+
+    getUser: builder.query({
       query: () => ({
         url: '/auth/user',
         method: 'GET',
       }),
-      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (_, { queryFulfilled }) => {
         const curToast = toast.loading('Fetching user data...');
         try {
           await queryFulfilled;
           toast.success('User data fetched successfully!', { id: curToast });
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-          if(error?.error?.status === 401 || error?.error?.status === 403) {
-            toast.error('There was an error fetching user data.', { id: curToast });
-          } else if(error?.error?.status === 'FETCH_ERROR') {
-            toast.error('Backend Error', { id: curToast });
+        } catch (err) {
+          const error = err as {error: FetchBaseQueryError | SerializedError};
+
+          if ('status' in error) {
+            if (error.status === 401 || error.status === 403) {
+              toast.error('Unauthorized access. Please log in.', { id: curToast });
+            }
+            else if (error.status === 'FETCH_ERROR') {
+              toast.error('Backend Error', { id: curToast });
+            }
+            else {
+              toast.error('An error occurred while fetching user data.', { id: curToast });
+            }
           }
+
         }
-        
+
       },
     }),
 
@@ -43,20 +52,24 @@ const apiSlice = createApi({
         method: 'POST',
         body: credentials,
       }),
-      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (_, { queryFulfilled }) => {
         const curToast = toast.loading('Logging in...');
         try {
           await queryFulfilled;
           toast.success('Logged in successfully!', { id: curToast });
-        } catch (error) {
+        } catch (err) {
+          const error = err as {error: FetchBaseQueryError | SerializedError};
           console.error('Error logging in:', error);
-          if(error?.error?.status === 401 || error?.error?.status === 403) {
-            toast.error('Invalid credentials. Please try again.', { id: curToast });
-          } else if(error?.error?.status === 'FETCH_ERROR') {
-            toast.error('Backend Error', { id: curToast });
+          if ('status' in error) {
+            if (error.status === 401 || error.status === 403) {
+              toast.error('Invalid credentials. Please try again.', { id: curToast });
+            }
+            else if (error.status === 'FETCH_ERROR') {
+              toast.error('Backend Error', { id: curToast });
+            }
           }
         }
-        
+
       },
     }),
 
@@ -66,22 +79,27 @@ const apiSlice = createApi({
         method: 'POST',
         body: userData,
       }),
-      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (_, { queryFulfilled }) => {
         const curToast = toast.loading('Registering...');
         try {
           await queryFulfilled;
           toast.success('Registered successfully!', { id: curToast });
-        } catch (error) {
-          console.error('Error registering:', error);
-          if(error && error.error && error.error.status === 400) {
-     
-
-            toast.error('Invalid registration data. Please check your input.', { id: curToast });
-          } else if(error?.error?.status === 'FETCH_ERROR') {
-            toast.error('Backend Error', { id: curToast });
+        } catch (err) {
+          const { error } = err as {
+            error: FetchBaseQueryError | SerializedError;
+          };
+          if ('status' in error) {
+            if (error.status === 400) {
+              toast.error('Invalid registration data. Please check your input.', { id: curToast });
+            }
+            else if (error.status === 'FETCH_ERROR') {
+              toast.error('Backend Error', { id: curToast });
+            } else {
+              toast.error('An error occurred during registration.', { id: curToast });
+            }
           }
         }
-        
+
       },
     }),
 
@@ -95,5 +113,5 @@ const apiSlice = createApi({
 });
 
 
-export const { useGetUserQuery, useLoginMutation, useLogoutMutation, useRegisterMutation,  } = apiSlice;
+export const { useGetUserQuery, useLoginMutation, useLogoutMutation, useRegisterMutation, } = apiSlice;
 export default apiSlice;

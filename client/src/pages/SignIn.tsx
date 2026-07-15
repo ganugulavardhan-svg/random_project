@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,12 +7,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { FileText } from "lucide-react";
 import toast from "react-hot-toast";
 import { useLoginMutation } from "@/store/authSlice";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, type LoginSchema } from "@/schema/auth.schema";
+
 
 export default function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const { 
+        register, handleSubmit, formState: { errors }
+    } = useForm<LoginSchema>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: "",
+            password: ""
+        }
+    });
+
     const [handleLogin, 
-        { isLoading, error, data }
+        { isLoading, data }
     ] = useLoginMutation();    
 
     const user = null;
@@ -23,9 +35,8 @@ export default function Login() {
         if (user) navigate("/dashboard", { replace: true });
     }, [user, navigate]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        handleLogin({ email, password });
+    const onSubmit = async (values: LoginSchema) => {
+        handleLogin(values);
         
         if (data){
             navigate("/dashboard");
@@ -61,19 +72,28 @@ export default function Login() {
                         <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
                         <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">or</span></div>
                     </div>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
-                            <Input id="email" type="email" placeholder="you@company.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                            <Input id="email" type="email" placeholder="you@company.com" {...register("email")} required />
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="password">Password</Label>
                                 <Link to="/forgot-password" className="text-xs text-primary hover:underline">Forgot password?</Link>
                             </div>
-                            <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                            <Input id="password" type="password" placeholder="••••••••" {...register("password")} required />
                         </div>
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+
+                        {/* show errors */}
+                        {errors.email || errors.password ? (
+                            <div className="text-sm text-red-500">
+                                {errors.email && <p>{errors.email.message}</p>}
+                                {errors.password && <p>{errors.password.message}</p>}
+                            </div>
+                        ) : null}
+
+                        <Button type="submit" className="w-full" disabled={(errors.email || errors.password) ? true : isLoading}>
                             {isLoading ? "Signing in..." : "Sign in"}
                         </Button>
                     </form>
