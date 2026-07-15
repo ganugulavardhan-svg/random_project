@@ -26,9 +26,6 @@ export class MailService {
     private prepareRegisterMailTemplate(
         userName: string,
         verificationCode: string): string {
-
-            console.log(verificationCode, "verificationCode in mail service");
-
         return `
 <!DOCTYPE html>
 <html lang="en">
