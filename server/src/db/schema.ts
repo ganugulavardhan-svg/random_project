@@ -3,7 +3,7 @@ import { pgTable, uuid, text, integer, boolean, timestamp, uniqueIndex } from 'd
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: text('email').notNull().unique(),
-  username: text('username').notNull().unique(), 
+  username: text('username').notNull(), 
   displayName: text('display_name').notNull().default('vandron'),
   profilePicture: text('profile_picture'),
   isVerified: boolean('is_verified').default(false).notNull(),

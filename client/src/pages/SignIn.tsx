@@ -11,7 +11,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginSchema } from "@/schema/auth.schema";
 
-
 export default function Login() {
     const { 
         register, handleSubmit, formState: { errors }
@@ -22,13 +21,14 @@ export default function Login() {
             password: ""
         }
     });
-
     const [handleLogin, 
         { isLoading, data }
     ] = useLoginMutation();    
 
     const user = null;
-    const signInWithGoogle = async () => { };
+    const signInWithGoogle = async () => { 
+        window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
+    };
     const navigate = useNavigate();
 
     useEffect(() => {

@@ -9,10 +9,7 @@ export async function register(req: Request, res: Response) {
   try {
     const { email, password, username } = req.body;
     const result = await authService.registerWithPassword(email, password, username);
-    res.status(201).json({  
-      data: result,
-      message: 'Login Success'
-    });
+    res.status(201).json(result);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
   }
@@ -28,9 +25,9 @@ export async function login(req: Request, res: Response) {
       sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    res.json({ user: result.user });
+    res.json({ user: result.user, message: 'Login Success' });
   } catch (err: any) {
-    res.status(401).json({ error: err.message });
+    res.status(401).json({ status: 'error', message: err.message });
   }
 }
 
